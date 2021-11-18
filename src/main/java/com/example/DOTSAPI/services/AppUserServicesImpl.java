@@ -16,7 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -30,8 +32,8 @@ public class AppUserServicesImpl implements AppUserServices, UserDetailsService 
         AppUser appUser = userRepo.findByUserName(username);
 
         if (appUser == null) {
-            log.error("User not found in the databse");
-            throw new UsernameNotFoundException("User not found in the databse");
+            log.error("User not found in the database");
+            throw new UsernameNotFoundException("User not found in the database");
         } else {
             log.info("User found in the database: {}", username);
         }
@@ -46,7 +48,13 @@ public class AppUserServicesImpl implements AppUserServices, UserDetailsService 
     public AppUser saveAppUser(AppUser appUser) {
         log.info("Saving new user {} to the database", appUser.getUserName());
         appUser.setPassword(argon2PasswordEncoder.encode(appUser.getPassword()));
+        appUser.setRoles(List.of(roleRepo.getRoleByName("ROLE_USER")));
         return userRepo.save(appUser);
+    }
+
+    @Override
+    public void deleteAppUserById(Long appUserId) {
+        userRepo.deleteById(appUserId);
     }
 
     @Override
@@ -59,7 +67,7 @@ public class AppUserServicesImpl implements AppUserServices, UserDetailsService 
     public void addRoleToAppUser(String userName, String roleName) {
         log.info("Adding a role {} to an exist user {}", roleName, userName);
         AppUser appUser = userRepo.findByUserName(userName);
-        Role role = roleRepo.findByName(roleName);
+        Role role = roleRepo.getRoleByName(roleName);
         appUser.getRoles().add(role);
     }
 
@@ -74,4 +82,5 @@ public class AppUserServicesImpl implements AppUserServices, UserDetailsService 
         log.info("Fetching all user");
         return userRepo.findAll();
     }
+
 }

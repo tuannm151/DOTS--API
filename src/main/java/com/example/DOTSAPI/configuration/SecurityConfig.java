@@ -1,4 +1,4 @@
-package com.example.DOTSAPI.security;
+package com.example.DOTSAPI.configuration;
 
 import com.example.DOTSAPI.filter.CustomAuthenticationFilter;
 import com.example.DOTSAPI.filter.CustomAuthorizationFilter;
@@ -15,8 +15,7 @@ import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.*;
 
 
@@ -37,12 +36,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 new CustomAuthenticationFilter(authenticationManagerBean());
 
         customAuthenticationFilter.setFilterProcessesUrl("/api/auth/login");
-        http.csrf().disable();
+        http.cors().and().csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers(GET, "/api/auth/refreshtoken").permitAll();
         http.authorizeRequests().antMatchers(POST,"/api/auth/login").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/api/users/**").hasAnyAuthority("ROLE_USER");
-        http.authorizeRequests().antMatchers(POST, "/api/users/save/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(POST, "/api/users/save").permitAll();
+        http.authorizeRequests().antMatchers(GET, "/api/users/list").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(DELETE, "/api/users/delete/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(POST, "/roles/**").hasAnyAuthority("ROLE_ADMIN");;
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }

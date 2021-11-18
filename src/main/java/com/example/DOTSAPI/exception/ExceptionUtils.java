@@ -8,17 +8,18 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 
 public class ExceptionUtils {
     public static ResponseEntity<Object> raiseException(HttpServletRequest request, HttpServletResponse response, String message,
-                                                        String detail) throws IOException {
-        ErrorResponse error = new ErrorResponse(HttpStatus.UNAUTHORIZED);
+                                                        List<String> details, HttpStatus status) throws IOException {
+        ErrorResponse error = new ErrorResponse(status);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         error.setMessage(message);
         error.setPath(request.getRequestURI());
-        error.setDetail(detail);
+        error.setDetail(details);
         new ObjectMapper().writeValue(response.getOutputStream(), error);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity.status(status).build();
     }
 }
