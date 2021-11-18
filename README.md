@@ -8,6 +8,7 @@ Note:
 
 Basic settings for application.properties:
 ```java
+
 server.port=8080
 
 //  Database config 
@@ -20,5 +21,7 @@ spring.jpa.hibernate.ddl-auto=create
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql = true
 spring.jpa.properties.javax.persistence.validation.mode=none
+
+
 ```
 
