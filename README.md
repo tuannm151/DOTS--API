@@ -1,4 +1,4 @@
-# DOTS--API
+# DOTS--API Spring Boot
 Spring Boot backend API implements for dots ecomerce web app
 
 Note: 
