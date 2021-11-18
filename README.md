@@ -1,5 +1,5 @@
 # DOTS--API
-Spring boot backend API implements for dots ecomerce web app
+Spring Boot backend API implements for dots ecomerce web app
 
 Note: 
 + It might took a while to load all the dependencies and configure
