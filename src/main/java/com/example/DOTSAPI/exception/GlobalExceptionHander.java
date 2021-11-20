@@ -22,20 +22,22 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHander extends ResponseEntityExceptionHandler {
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST);
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers, HttpStatus status,
+                                                                  WebRequest request) {
+        ErrorResponse error = new ErrorResponse(status);
         error.setMessage("Validation failed");
         List<String> validationListErr =
                 ex.getBindingResult().getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
         error.setDetail(validationListErr);
         error.setPath(((ServletWebRequest)request).getRequest().getRequestURI().toString());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return ResponseEntity.status(status).body(error);
     }
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
         ErrorResponse error = new ErrorResponse(HttpStatus.BAD_REQUEST);
-        error.setMessage("Internal server error");
+        error.setMessage("An unexpected error occurred");
         error.setPath(((ServletWebRequest)request).getRequest().getRequestURI().toString());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }

@@ -50,7 +50,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                ExceptionUtils.raiseException(request,response, "Authentication failed", details, HttpStatus.UNAUTHORIZED);
                return null;
            } catch(Exception e) {
-               List<String> details = List.of("Validation failed");
+               List<String> details = List.of("Invalid or missing token");
                ExceptionUtils.raiseException(request,response, "Authentication failed", details, HttpStatus.UNAUTHORIZED);
                return null;
            }
