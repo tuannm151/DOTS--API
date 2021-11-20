@@ -1,6 +1,7 @@
 package com.example.DOTSAPI;
 
 import com.example.DOTSAPI.model.AppUser;
+import com.example.DOTSAPI.model.Product;
 import com.example.DOTSAPI.model.Role;
 import com.example.DOTSAPI.services.AppUserServices;
 import org.springframework.boot.CommandLineRunner;
@@ -27,16 +28,17 @@ public class DotsApiApplication {
 	@Bean
 	CommandLineRunner run(AppUserServices appUserServices) {
 		return args -> {
-			appUserServices.saveRole(new Role(null, "ROLE_USER"));
-			appUserServices.saveRole(new Role(null, "ROLE_ADMIN"));
-			appUserServices.saveRole(new Role(null, "ROLE_SUPER_ADMIN"));
+			appUserServices.saveRole(new Role( "ROLE_USER"));
+			appUserServices.saveRole(new Role( "ROLE_ADMIN"));
+			appUserServices.saveRole(new Role("ROLE_SUPER_ADMIN"));
 
-			appUserServices.saveAppUser(new AppUser(null, "Tuan", "Nguyen", "tuanxsokoh", "tuanxsokoh@gmail.com",
+			appUserServices.saveAppUser(new AppUser( "Tuan", "Nguyen", "tuanxsokoh", "tuanxsokoh@gmail.com",
+					"123456", new ArrayList<>()));
+			appUserServices.saveAppUser(new AppUser("Long", "Nguyen", "longnguyen", "long@gmail.com",
 					"123456", new ArrayList<>()));
 
 			appUserServices.addRoleToAppUser("tuanxsokoh", "ROLE_SUPER_ADMIN");
 			appUserServices.addRoleToAppUser("tuanxsokoh", "ROLE_ADMIN");
-			appUserServices.addRoleToAppUser("tuanxsokoh", "ROLE_USER");
 		};
 	}
 

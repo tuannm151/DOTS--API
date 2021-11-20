@@ -5,10 +5,11 @@ import com.auth0.jwt.algorithms.Algorithm;
 
 import com.example.DOTSAPI.exception.ExceptionUtils;
 import com.example.DOTSAPI.model.AppUser;
-import com.example.DOTSAPI.security.SecurityConstants;
+import com.example.DOTSAPI.configuration.SecurityConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,8 +26,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.example.DOTSAPI.security.SecurityConstants.EXPIRATION_TIME;
-import static com.example.DOTSAPI.security.SecurityConstants.REFRESH_TOKEN_EXPIRATION_TIME;
+import static com.example.DOTSAPI.configuration.SecurityConstants.EXPIRATION_TIME;
+import static com.example.DOTSAPI.configuration.SecurityConstants.REFRESH_TOKEN_EXPIRATION_TIME;
 
 @Slf4j
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -45,11 +46,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(appUser.getUserName(),appUser.getPassword());
                return authenticationManager.authenticate(authenticationToken);
            } catch(BadCredentialsException e) {
-               ExceptionUtils.raiseException(request,response, "Authentication failed", "Username or password " +
-                       "is incorrect");
+               List<String> details = List.of("Username or password is incorrect");
+               ExceptionUtils.raiseException(request,response, "Authentication failed", details, HttpStatus.UNAUTHORIZED);
                return null;
            } catch(Exception e) {
-               ExceptionUtils.raiseException(request,response, "Authentication failed", "Validation failed");
+               List<String> details = List.of("Invalid or missing token");
+               ExceptionUtils.raiseException(request,response, "Authentication failed", details, HttpStatus.UNAUTHORIZED);
                return null;
            }
     }

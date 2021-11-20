@@ -1,4 +1,4 @@
-package com.example.DOTSAPI.security;
+package com.example.DOTSAPI.configuration;
 
 public class SecurityConstants {
     public static final String SECRET = "...DOTS...";
