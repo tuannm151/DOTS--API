@@ -1,4 +1,4 @@
-package com.example.DOTSAPI.services;
+package com.example.DOTSAPI.services.appUser;
 
 import com.example.DOTSAPI.model.AppUser;
 import com.example.DOTSAPI.model.Role;
@@ -9,7 +9,7 @@ public interface AppUserServices {
     AppUser saveAppUser(AppUser appUser);
     Role saveRole(Role role);
     void addRoleToAppUser(String userName, String roleName);
-    AppUser getUserByUserName(String userName);
+    AppUser findUserByUserName(String userName);
     void deleteAppUserById(Long appUserId);
     List<AppUser> getAppUsers();
 }

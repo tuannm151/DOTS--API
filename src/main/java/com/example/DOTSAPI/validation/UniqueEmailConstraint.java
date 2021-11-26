@@ -1,7 +1,6 @@
 package com.example.DOTSAPI.validation;
 
 import com.example.DOTSAPI.repository.UserRepo;
-import com.example.DOTSAPI.services.AppUserServices;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.ConstraintValidator;

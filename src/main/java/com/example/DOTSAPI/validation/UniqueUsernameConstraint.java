@@ -1,14 +1,7 @@
 package com.example.DOTSAPI.validation;
 
 import com.example.DOTSAPI.repository.UserRepo;
-import com.example.DOTSAPI.services.AppUserServices;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

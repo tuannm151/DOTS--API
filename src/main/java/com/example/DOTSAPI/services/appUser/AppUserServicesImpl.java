@@ -1,5 +1,6 @@
-package com.example.DOTSAPI.services;
+package com.example.DOTSAPI.services.appUser;
 
+import com.example.DOTSAPI.exception.NotFoundException;
 import com.example.DOTSAPI.model.AppUser;
 import com.example.DOTSAPI.model.Role;
 import com.example.DOTSAPI.repository.RoleRepo;
@@ -12,15 +13,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Service @RequiredArgsConstructor @Transactional @Slf4j
 public class AppUserServicesImpl implements AppUserServices, UserDetailsService {
@@ -32,10 +28,7 @@ public class AppUserServicesImpl implements AppUserServices, UserDetailsService 
         AppUser appUser = userRepo.findByUserName(username);
 
         if (appUser == null) {
-            log.error("User not found in the database");
-            throw new UsernameNotFoundException("User not found in the database");
-        } else {
-            log.info("User found in the database: {}", username);
+            throw new UsernameNotFoundException("User not found");
         }
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         appUser.getRoles().forEach(role -> {
@@ -46,20 +39,19 @@ public class AppUserServicesImpl implements AppUserServices, UserDetailsService 
     }
     @Override
     public AppUser saveAppUser(AppUser appUser) {
-        log.info("Saving new user {} to the database", appUser.getUserName());
         appUser.setPassword(argon2PasswordEncoder.encode(appUser.getPassword()));
-        appUser.setRoles(List.of(roleRepo.getRoleByName("ROLE_USER")));
+        appUser.setRoles(Set.of(roleRepo.findRoleByName("ROLE_USER")));
         return userRepo.save(appUser);
     }
 
     @Override
     public void deleteAppUserById(Long appUserId) {
+        if(!userRepo.existsById(appUserId)) throw new NotFoundException("User not found");
         userRepo.deleteById(appUserId);
     }
 
     @Override
     public Role saveRole(Role role) {
-        log.info("Saving new role {} to the database", role.getName());
         return roleRepo.save(role);
     }
 
@@ -67,19 +59,27 @@ public class AppUserServicesImpl implements AppUserServices, UserDetailsService 
     public void addRoleToAppUser(String userName, String roleName) {
         log.info("Adding a role {} to an exist user {}", roleName, userName);
         AppUser appUser = userRepo.findByUserName(userName);
-        Role role = roleRepo.getRoleByName(roleName);
+        Role role = roleRepo.findRoleByName(roleName);
+        if(role == null) {
+            throw new NotFoundException("Role not found");
+        }
+        if(appUser == null) {
+            throw new NotFoundException("User not found");
+        }
         appUser.getRoles().add(role);
     }
 
     @Override
-    public AppUser getUserByUserName(String userName) {
-        log.info("Fetching user {}", userName);
-        return userRepo.findByUserName(userName);
+    public AppUser findUserByUserName(String userName) {
+        AppUser appUser = userRepo.findByUserName(userName);
+        if(appUser == null) {
+            throw new NotFoundException("User not found");
+        }
+        return appUser;
     }
 
     @Override
     public List<AppUser> getAppUsers() {
-        log.info("Fetching all user");
         return userRepo.findAll();
     }
 

@@ -46,12 +46,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(appUser.getUserName(),appUser.getPassword());
                return authenticationManager.authenticate(authenticationToken);
            } catch(BadCredentialsException e) {
+               System.out.println("AAAA");
                List<String> details = List.of("Username or password is incorrect");
-               ExceptionUtils.raiseException(request,response, "Authentication failed", details, HttpStatus.UNAUTHORIZED);
+               ExceptionUtils.raiseErrorJson("Authentication failed", details, HttpStatus.UNAUTHORIZED, request, response);
                return null;
            } catch(Exception e) {
                List<String> details = List.of("Invalid or missing token");
-               ExceptionUtils.raiseException(request,response, "Authentication failed", details, HttpStatus.UNAUTHORIZED);
+               ExceptionUtils.raiseErrorJson("Authentication failed", details, HttpStatus.UNAUTHORIZED, request, response);
                return null;
            }
     }

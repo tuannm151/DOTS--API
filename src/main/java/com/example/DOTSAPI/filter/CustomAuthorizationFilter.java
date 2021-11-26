@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-import static com.example.DOTSAPI.exception.ExceptionUtils.raiseException;
+import static com.example.DOTSAPI.exception.ExceptionUtils.raiseErrorJson;
 import static com.example.DOTSAPI.configuration.SecurityConstants.SECRET;
 import static com.example.DOTSAPI.configuration.SecurityConstants.TOKEN_PREFIX;
 import static java.util.Arrays.stream;
@@ -47,7 +47,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch(Exception e) {
             List<String> details = List.of("Invalid token provided");
-                raiseException(request, response, "Unauthorized", details, HttpStatus.UNAUTHORIZED);
+                raiseErrorJson("Unauthorized", details, HttpStatus.UNAUTHORIZED, request, response);
         }
     }
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request)   {

@@ -12,14 +12,25 @@ import java.util.List;
 
 
 public class ExceptionUtils {
-    public static ResponseEntity<Object> raiseException(HttpServletRequest request, HttpServletResponse response, String message,
-                                                        List<String> details, HttpStatus status) throws IOException {
-        ErrorResponse error = new ErrorResponse(status);
+    public static void raiseErrorJson(String message, List<String> details, HttpStatus status,
+                                      HttpServletRequest request
+                                                        ,HttpServletResponse response) throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(status.value());
+        ErrorResponse error = new ErrorResponse(status);
         error.setMessage(message);
         error.setPath(request.getRequestURI());
         error.setDetail(details);
         new ObjectMapper().writeValue(response.getOutputStream(), error);
-        return ResponseEntity.status(status).build();
     }
+    public static ResponseEntity<Object> buildResponseEntity(String message, List<String> details, HttpStatus status,
+                                           HttpServletRequest request
+            ) {
+        ErrorResponse error = new ErrorResponse(status);
+        error.setMessage(message);
+        error.setPath(request.getRequestURI());
+        error.setDetail(details);
+        return ResponseEntity.status(status).contentType(MediaType.APPLICATION_JSON).body(error);
+    }
+
 }
