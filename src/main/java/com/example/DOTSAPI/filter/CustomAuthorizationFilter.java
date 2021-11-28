@@ -47,21 +47,19 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch(Exception e) {
             List<String> details = List.of("Invalid token provided");
-                raiseErrorJson("Unauthorized", details, HttpStatus.UNAUTHORIZED, request, response);
+            raiseErrorJson("Unauthorized", details, HttpStatus.UNAUTHORIZED, request, response);
         }
     }
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request)   {
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) throws VerifyError {
         String token = request.getHeader(AUTHORIZATION).replace(TOKEN_PREFIX,"");
         Algorithm algorithm = Algorithm.HMAC256(SECRET.getBytes());
-        DecodedJWT decodedJWT = decodeJWT(token, algorithm);
+        JWTVerifier verifier = JWT.require(algorithm).build();
+        DecodedJWT decodedJWT = verifier.verify(token);
         String username = decodedJWT.getSubject();
         String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
         return new UsernamePasswordAuthenticationToken(username, null, authorities);
     }
-    public static DecodedJWT decodeJWT(String token,Algorithm algorithm) {
-            JWTVerifier verifier = JWT.require(algorithm).build();
-            return verifier.verify(token);
-    }
+
 }

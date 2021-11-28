@@ -14,7 +14,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 public class Customer {
     @Id
@@ -27,17 +26,19 @@ public class Customer {
     @Size(min = 6, message = "Phone number not valid")
     @Column(unique = true, length = 15)
     public String phone;
+
     @Size(min = 6, message = "Address not valid")
+    @Column(length = 1000)
     public String address;
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private AppUser user;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
-    private List<Order> orders;
+    @OneToOne(mappedBy = "customer", fetch = FetchType.LAZY)
+    private Order order;
 
     public Customer(String name, String phone, String address) {
         this.name = name;

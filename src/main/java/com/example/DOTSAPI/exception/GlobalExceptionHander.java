@@ -5,12 +5,15 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import javax.naming.OperationNotSupportedException;
 import javax.security.sasl.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -63,6 +66,16 @@ public class GlobalExceptionHander extends ResponseEntityExceptionHandler {
                 request);
     }
 
+    @ExceptionHandler(OperationNotSupportedException.class)
+    public final ResponseEntity<Object> handleOperationNotSupportedException(OperationNotSupportedException ex,
+                                                                             HttpServletRequest request) {
+        return  ExceptionUtils.buildResponseEntity(
+                ex.getMessage(),
+                null,
+                HttpStatus.FORBIDDEN,
+                request);
+    }
+
     @ExceptionHandler(CustomAuthenticationException.class)
     public final ResponseEntity<Object> handleAlreadyExistsException(CustomAuthenticationException ex,
                                                                      HttpServletRequest request) {
@@ -83,6 +96,14 @@ public class GlobalExceptionHander extends ResponseEntityExceptionHandler {
                 request);
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public final ResponseEntity<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        return ExceptionUtils.buildResponseEntity(
+                "Wrong request format",
+                null,
+                HttpStatus.BAD_REQUEST,
+                request);
+    }
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, HttpServletRequest request) {
         return ExceptionUtils.buildResponseEntity(

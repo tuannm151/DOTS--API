@@ -23,15 +23,13 @@ public class OrderItem {
     @Column(nullable = false)
     private Long id;
 
-    @Temporal(TemporalType.DATE)
-    private Date createdAt;
+    @Column(nullable = false)
+    private Long quantity;
 
-    @NotNull
-    @Min(value = 1, message = "Quantity can't below 1")
-    private Integer quantity;
+    @Column(nullable = false)
+    private Integer size;
 
-    @NotNull
-    @Min(value = 0, message = "Price can't below 0")
+    @Column(nullable = false)
     private Double unitPrice;
 
     @NotBlank
@@ -46,7 +44,13 @@ public class OrderItem {
     @JoinColumn(nullable = false, name = "product_id")
     private Product product;
 
-
+    public OrderItem(Long quantity, Integer size,String color, Product product) {
+        this.size = size;
+        this.quantity = quantity;
+        this.color = color;
+        this.product = product;
+        this.unitPrice = product.getPrice();
+    }
 
     @Override
     public boolean equals(Object o) {

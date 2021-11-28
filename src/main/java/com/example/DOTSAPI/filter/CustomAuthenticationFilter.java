@@ -4,8 +4,9 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
 import com.example.DOTSAPI.exception.ExceptionUtils;
-import com.example.DOTSAPI.model.AppUser;
+import com.example.DOTSAPI.model.User;
 import com.example.DOTSAPI.configuration.SecurityConstants;
+import com.example.DOTSAPI.services.appUser.AppUserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -41,12 +41,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)  {
            try {
-               AppUser appUser = new ObjectMapper().readValue(request.getInputStream(), AppUser.class);
-               log.info("Username: {}\nPassword: {}", appUser.getUserName(), appUser.getPassword());
-               UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(appUser.getUserName(),appUser.getPassword());
+               User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
+               log.info("Username: {}\nPassword: {}", user.getUserName(), user.getPassword());
+               UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword());
                return authenticationManager.authenticate(authenticationToken);
            } catch(BadCredentialsException e) {
-               System.out.println("AAAA");
                List<String> details = List.of("Username or password is incorrect");
                ExceptionUtils.raiseErrorJson("Authentication failed", details, HttpStatus.UNAUTHORIZED, request, response);
                return null;
@@ -78,7 +77,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
-        User user = (User) authentication.getPrincipal();
+        AppUserDetails user = (AppUserDetails) authentication.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256(SecurityConstants.SECRET.getBytes());
         List<String> roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 

@@ -47,7 +47,7 @@ public class Product {
 
     @ElementCollection
     @NotEmpty(message = "Size is missing")
-    private Set<Long> size;
+    private Set<Integer> size;
 
     @NotNull(message = "Category is missing")
     @ManyToOne(fetch = FetchType.EAGER)
@@ -55,7 +55,7 @@ public class Product {
     private Category category;
 
     public Product(String name, String description, String imageUrl, Double price, Long stock, List<String> color,
-                   List<Long> size) {
+                   List<Integer> size) {
         this.name = name;
         this.description = description;
         this.imageUrl = imageUrl;

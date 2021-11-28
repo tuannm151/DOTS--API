@@ -11,9 +11,8 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AddToCardDto {
-    @NotNull
-    private Long productId;
+public class UpdateCartItemDto {
+    private Long cartItemId;
 
     @NotNull(message = "Quantity is missing")
     @Min(value = 1, message = "Quantity at least 1")
@@ -21,13 +20,14 @@ public class AddToCardDto {
 
     @NotNull(message = "Size is missing")
     private Integer size;
-
     @NotBlank(message = "Color is missing")
     private String color;
-    public AddToCardDto(Long productId, Long quantity, Integer size,String color) {
-        this.productId = productId;
+
+
+    public UpdateCartItemDto(Long cartItemId, Long quantity, Integer size,String color) {
+        this.cartItemId = cartItemId;
+        this.size = size;
         this.quantity = quantity;
         this.color = color;
-        this.size = size;
     }
 }

@@ -33,7 +33,7 @@ public class ProductServicesImpl implements ProductServices {
     public Product getProductById(Long id) {
             Optional<Product> product =  productRepo.findById(id);
             if(product.isEmpty()) {
-               throw new NotFoundException("Product not found");
+               throw new NotFoundException("Product ID not found");
             }
             return product.get();
     }

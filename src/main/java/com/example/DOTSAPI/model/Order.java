@@ -1,64 +1,67 @@
 package com.example.DOTSAPI.model;
 
+import com.example.DOTSAPI.enums.OrderStatus;
+import com.example.DOTSAPI.enums.PaymentStatus;
+import com.example.DOTSAPI.enums.PaymentType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
+@Table(name="orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Long id;
 
-    @NotNull
     @Temporal(TemporalType.DATE)
-    private Date createdDate;
+    private Date createdAt;
+
+    @Temporal(TemporalType.DATE)
+    private Date modifiedAt;
 
     @Min(value = 0, message = "Total can't be negative")
-    @NotNull(message = "Total price can't be null")
     private double totalPrice;
 
-    @NotNull
     @Min(value = 1, message = "Item numbers can't lower than 1")
-    private double itemsNumber;
+    private int itemsNumber;
 
-    @NotBlank(message = "Status is missing")
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PaymentType paymentType;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<OrderItem> orderItems;
-
-    @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    private Customer customer;
+    private Set<OrderItem> orderItems = new LinkedHashSet<>();
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private AppUser user;
+    private User user;
 
-    public double caculateTotalPrice() {
-        double sum = 0.0;
-        for(OrderItem orderItem : orderItems) {
-            sum+= orderItem.getUnitPrice() * orderItem.getQuantity();
-        }
-        return sum;
-    }
-    public int caculateItemsNumber() {
-        return orderItems.size();
-    }
+    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    private Customer customer;
 
+    public Order() {
+        this.createdAt = new Date();
+        this.modifiedAt = new Date();
+    }
 }

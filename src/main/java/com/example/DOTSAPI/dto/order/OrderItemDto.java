@@ -6,30 +6,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-
 @Getter
 @Setter
 @NoArgsConstructor
+
 public class OrderItemDto {
     private Long id;
-
-    @NotNull
-    private Product product;
-
-    @NotNull
-    private Integer quantity;
-
-    @NotNull
+    private String category;
+    private String imageUrl;
+    private String productName;
+    private Long quantity;
+    private Integer size;
     private double unitPrice;
-
-    @NotNull
     private String color;
 
-    public OrderItemDto(OrderItem orderItem) {
-        this.product = orderItem.getProduct();
-        this.quantity = orderItem.getQuantity();
-        this.unitPrice = orderItem.getUnitPrice();
-        this.color = orderItem.getColor();
+    public OrderItemDto(Product product) {
+        this.imageUrl = product.getImageUrl();
+        this.productName = product.getName();
+        this.id = product.getId();
+        this.category = product.getCategory().getName();
     }
 }

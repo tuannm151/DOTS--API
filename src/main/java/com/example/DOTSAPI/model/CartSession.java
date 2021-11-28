@@ -1,6 +1,7 @@
 package com.example.DOTSAPI.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -17,7 +19,6 @@ import java.util.Set;
 public class CartSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private Long id;
 
     @Temporal(TemporalType.DATE)
@@ -31,22 +32,17 @@ public class CartSession {
     private int itemsNumber;
 
     @JsonIgnore
-    @OneToOne(targetEntity = AppUser.class, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "user_id")
-    private AppUser user;
+    @OneToMany(mappedBy = "cartSession", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<CartItem> cartItems = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "cartSession", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<CartItem> cartItems;
 
-    public double getTotalPrice() {
-        double sum = 0.0;
-        for(CartItem item : cartItems) {
-            sum += item.getProduct().getPrice() * item.getQuantity();
-        }
-        return sum;
-    }
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public int getItemsNumber() {
-        return this.cartItems.size();
+    public CartSession(User user) {
+        this.user = user;
     }
 }
+

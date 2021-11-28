@@ -10,14 +10,13 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 public class CartSessionDto {
-    private Long id;
-
-    private Set<CartItemDto> cartItemsDto;
-
     private double totalPrice;
+    private int itemsNumber;
+    private Set<CartItemDto> cartItemsDto;
 
    public CartSessionDto(Set<CartItemDto> cartItemsDto, double totalPrice) {
        this.cartItemsDto = cartItemsDto;
        this.totalPrice = totalPrice;
+       this.itemsNumber = cartItemsDto.size();
    }
 }

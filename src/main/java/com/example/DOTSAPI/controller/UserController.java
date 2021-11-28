@@ -2,8 +2,8 @@ package com.example.DOTSAPI.controller;
 
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.DOTSAPI.exception.CustomAuthenticationException;
-import com.example.DOTSAPI.exception.ExceptionUtils;
-import com.example.DOTSAPI.model.AppUser;
+import com.example.DOTSAPI.model.Customer;
+import com.example.DOTSAPI.model.User;
 import com.example.DOTSAPI.model.Role;
 import com.example.DOTSAPI.services.appUser.AppUserServices;
 import com.example.DOTSAPI.services.AuthServices;
@@ -16,16 +16,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.security.sasl.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -45,30 +44,36 @@ public class UserController {
     private final AppUserServices appUserServices;
     private final AuthServices authServices;
     @PostMapping("/users/save")
-    public ResponseEntity<AppUser> saveAppUser(@RequestBody @Valid AppUser appUser) {
+    public ResponseEntity<User> saveAppUser(@RequestBody @Valid User user) {
         URI uri =
                 URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/users/save").toUriString());
 
-        return ResponseEntity.created(uri).body(appUserServices.saveAppUser(appUser));
+        return ResponseEntity.created(uri).body(appUserServices.saveAppUser(user));
     }
 
+    @PostMapping("/users/customer")
+    public ResponseEntity<?> addCustomer(@RequestBody @Valid Customer customer, Authentication authentication) {
+        User user = appUserServices.findUserByUserName(authentication.getName());
+        appUserServices.addCustomer(customer, user);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 
     @GetMapping("/users/refreshtoken")
-    public void renewAccessToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String tokenHeader = request.getHeader(AUTHORIZATION);
-        if(tokenHeader == null || !tokenHeader.startsWith(TOKEN_PREFIX)) {
-            throw new CustomAuthenticationException("Refresh token is missing");
+    public void renewAccessToken(HttpServletRequest request, HttpServletResponse response) throws CustomAuthenticationException {
+        try {
+            User user = authServices.loadUserFromHttpRequest(request);
+            String refresh_token = request.getHeader(AUTHORIZATION).replace(TOKEN_PREFIX, "");
+            List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+            String access_token = generateToken(roles, request.getRequestURL().toString(),
+                    user.getUserName(), Algorithm.HMAC256(SECRET.getBytes()));
+            Map<String, String> tokens = new HashMap<>();
+            tokens.put("access_token", access_token);
+            tokens.put("refresh_token", refresh_token);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+        } catch (Exception e) {
+            throw new CustomAuthenticationException(e.getMessage());
         }
-        String refresh_token = tokenHeader.replace(TOKEN_PREFIX, "");
-        AppUser appUser = authServices.loadUsernameByToken(refresh_token);
-        List<String> roles = appUser.getRoles().stream().map(Role::getName).collect(Collectors.toList());
-        String access_token = generateToken(roles, request.getRequestURL().toString(),
-                appUser.getUserName(), Algorithm.HMAC256(SECRET.getBytes()));
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("access_token", access_token);
-        tokens.put("refresh_token", refresh_token);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
 
     @PostMapping("/admin/roles/save")
@@ -84,16 +89,14 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
     @DeleteMapping("/admin/users/delete/{id}")
-    public ResponseEntity<AppUser> deleteAppUserById(@PathVariable Long id) {
+    public ResponseEntity<User> deleteAppUserById(@PathVariable Long id) {
         appUserServices.deleteAppUserById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
     @GetMapping("/admin/users/list")
-    public ResponseEntity<List<AppUser>> getAppUsers() {
+    public ResponseEntity<List<User>> getAppUsers() {
         return ResponseEntity.ok().body(appUserServices.getAppUsers());
     }
-
-
 }
 
 @Data

@@ -1,15 +1,17 @@
 package com.example.DOTSAPI.services.appUser;
 
-import com.example.DOTSAPI.model.AppUser;
+import com.example.DOTSAPI.model.Customer;
+import com.example.DOTSAPI.model.User;
 import com.example.DOTSAPI.model.Role;
 
 import java.util.List;
 
 public interface AppUserServices {
-    AppUser saveAppUser(AppUser appUser);
+    User saveAppUser(User user);
     Role saveRole(Role role);
     void addRoleToAppUser(String userName, String roleName);
-    AppUser findUserByUserName(String userName);
+    User findUserByUserName(String userName);
     void deleteAppUserById(Long appUserId);
-    List<AppUser> getAppUsers();
+    List<User> getAppUsers();
+    void addCustomer(Customer customer, User user);
 }
