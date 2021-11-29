@@ -6,8 +6,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.NonNullApi;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -45,7 +48,25 @@ public class GlobalExceptionHander extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
+    @Override
+    protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+                List<String> validationListErr =
+                ex.getBindingResult().getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
+        return ExceptionUtils.buildResponseEntity(
+                "Validation failed",
+                validationListErr,
+                status,
+                (HttpServletRequest) request);
+    }
 
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+                return ExceptionUtils.buildResponseEntity(
+                "Wrong request format",
+                null,
+                HttpStatus.BAD_REQUEST,
+                        (HttpServletRequest) request);
+    }
 
     @ExceptionHandler(EmptyResultDataAccessException.class)
     public final ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex,
@@ -77,7 +98,7 @@ public class GlobalExceptionHander extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(CustomAuthenticationException.class)
-    public final ResponseEntity<Object> handleAlreadyExistsException(CustomAuthenticationException ex,
+    public final ResponseEntity<Object> handleCustomAuthenticationException(CustomAuthenticationException ex,
                                                                      HttpServletRequest request) {
         return ExceptionUtils.buildResponseEntity(
                 ex.getMessage(),
@@ -96,14 +117,6 @@ public class GlobalExceptionHander extends ResponseEntityExceptionHandler {
                 request);
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public final ResponseEntity<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletRequest request) {
-        return ExceptionUtils.buildResponseEntity(
-                "Wrong request format",
-                null,
-                HttpStatus.BAD_REQUEST,
-                request);
-    }
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, HttpServletRequest request) {
         return ExceptionUtils.buildResponseEntity(

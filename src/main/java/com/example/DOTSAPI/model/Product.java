@@ -54,6 +54,9 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    private float overallRating;
+    private Integer totalRating;
+
     public Product(String name, String description, String imageUrl, Double price, Long stock, List<String> color,
                    List<Integer> size) {
         this.name = name;
@@ -63,6 +66,8 @@ public class Product {
         this.stock = stock;
         this.color = new HashSet<>(color);
         this.size = new HashSet<>(size);
+        overallRating = 0;
+        totalRating = 0;
     }
 
     @Override
