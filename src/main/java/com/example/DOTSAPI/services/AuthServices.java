@@ -33,7 +33,7 @@ public class AuthServices {
                JWTVerifier verifier = JWT.require(algorithm).build();
                DecodedJWT decodedJWT = verifier.verify(token);
                String userName =  decodedJWT.getSubject();
-               return userRepo.getByUserName(userName);
+               return userRepo.getByUserNameIgnoreCase(userName);
            } catch (CustomAuthenticationException ex) {
                throw new CustomAuthenticationException(ex.getMessage());
            } catch (Exception ex) {

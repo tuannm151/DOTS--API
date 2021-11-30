@@ -18,6 +18,6 @@ public class UniqueEmailConstraint implements ConstraintValidator<UniqueEmail, S
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
         System.out.println(userRepo);
-        return !userRepo.existsByEmail(email);
+        return !userRepo.existsByEmailIgnoreCase(email);
     }
 }

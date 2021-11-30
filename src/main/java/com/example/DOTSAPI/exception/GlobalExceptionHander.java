@@ -119,8 +119,9 @@ public class GlobalExceptionHander extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, HttpServletRequest request) {
+        // ex.getMessage() for debug purpose, change it to "UNEXPECTED_ERROR" for production
         return ExceptionUtils.buildResponseEntity(
-                "An unexpected error occurred",
+                ex.getMessage(),
                 null,
                 HttpStatus.BAD_REQUEST,
                 request);

@@ -10,6 +10,6 @@ import java.util.List;
 public interface ProductRepo extends JpaRepository<Product, Long> {
     List<Product> findAllByCategory(Category category);
 
-    @Query("SELECT p FROM Product p WHERE CONCAT(p.name, ' ', p.category.name, ' ') LIKE %?1%")
+    @Query("SELECT p FROM Product p WHERE CONCAT(lower(p.name), ' ', lower(p.category.name), ' ') LIKE %?1%")
     List<Product> searchByKeyword(String keyword);
 }

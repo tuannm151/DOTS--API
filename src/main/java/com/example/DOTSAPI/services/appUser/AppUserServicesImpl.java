@@ -44,7 +44,7 @@ public class AppUserServicesImpl implements AppUserServices {
     @Override
     public void addRoleToAppUser(String userName, String roleName) {
         log.info("Adding a role {} to an exist user {}", roleName, userName);
-        User user = userRepo.findByUserName(userName);
+        User user = userRepo.findByUserNameIgnoreCase(userName);
         Role role = roleRepo.findRoleByName(roleName);
         if(role == null) {
             throw new NotFoundException("Role not found");
@@ -57,7 +57,7 @@ public class AppUserServicesImpl implements AppUserServices {
 
     @Override
     public User findUserByUserName(String userName) {
-        User user = userRepo.findByUserName(userName);
+        User user = userRepo.findByUserNameIgnoreCase(userName);
         if(user == null) {
             throw new NotFoundException("User not found");
         }

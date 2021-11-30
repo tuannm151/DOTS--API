@@ -33,13 +33,13 @@ public class DotsApiApplication {
 	@Bean
 	CommandLineRunner run(AppUserServices appUserServices, ProductServices productServices) {
 		return args -> {
-			appUserServices.saveRole(new Role( "ROLE_USER"));
-			appUserServices.saveRole(new Role( "ROLE_ADMIN"));
-
-			appUserServices.saveAppUser(new User( "Tuan", "Nguyen", "tuanxsokoh", "tuanxsokoh@gmail.com",
-					"123456", new HashSet<>()));
-
-			appUserServices.addRoleToAppUser("tuanxsokoh", "ROLE_ADMIN");
+//			appUserServices.saveRole(new Role( "ROLE_USER"));
+//			appUserServices.saveRole(new Role( "ROLE_ADMIN"));
+//
+//			appUserServices.saveAppUser(new User( "Tuan", "Nguyen", "tuanxsokoh", "tuanxsokoh@gmail.com",
+//					"123456", new HashSet<>()));
+//
+//			appUserServices.addRoleToAppUser("tuanxsokoh", "ROLE_ADMIN");
 		};
 	}
 

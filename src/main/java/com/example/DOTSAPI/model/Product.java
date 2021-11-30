@@ -8,57 +8,58 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long id;
 
-    @NotBlank(message = "Name is missing")
+    @Temporal(TemporalType.DATE)
+    private Date createdAt;
+
+    @Temporal(TemporalType.DATE)
+    private Date modifiedAt;
+
+    @Column(nullable = false)
     private String name;
 
-    @NotBlank(message = "Description is missing")
-    @Column(length = 1000)
+    @Column(nullable = false,length = 1000)
     private String description;
 
-    @NotBlank(message = "Image URL is missing")
+    @Column(nullable = false)
     private String imageUrl;
 
-    @NotNull(message = "Price is missing")
+    @Column(nullable = false)
     private Double price;
 
-    @NotNull(message = "Stock number is missing")
-    @Min(value = 0, message = "Stock number can't not be negative")
+    @Column(nullable = false)
     private Long stock;
 
     @ElementCollection
-    @NotEmpty(message = "Color is missing")
     private Set<String> color;
 
     @ElementCollection
-    @NotEmpty(message = "Size is missing")
     private Set<Integer> size;
 
-    @NotNull(message = "Category is missing")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "brand_id", nullable = false)
+    private Brand brand;
 
     private float overallRating;
     private Integer totalRating;
 
     public Product(String name, String description, String imageUrl, Double price, Long stock, List<String> color,
-                   List<Integer> size) {
+                   List<Integer> size, Brand brand) {
         this.name = name;
         this.description = description;
         this.imageUrl = imageUrl;
@@ -66,8 +67,16 @@ public class Product {
         this.stock = stock;
         this.color = new HashSet<>(color);
         this.size = new HashSet<>(size);
+        this.brand = brand;
         overallRating = 0;
         totalRating = 0;
+        this.createdAt = new Date();
+        this.modifiedAt = new Date();
+    }
+
+    public Product() {
+        this.createdAt = new Date();
+        this.modifiedAt = new Date();
     }
 
     @Override
