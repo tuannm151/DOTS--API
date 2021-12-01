@@ -67,6 +67,20 @@ public class OrderServicesImpl implements OrderServices {
     }
 
     @Override
+    public List<OrderDto> findAllOrders() {
+        List<OrderDto> orderDtos = new ArrayList<>();
+        List<Order> orders = orderRepo.findAllByOrderByCreatedAtDesc();
+        if(orders.isEmpty()) {
+            throw new NotFoundException("ORDER_EMPTY");
+        }
+        for(Order order : orders) {
+            OrderDto orderDto = convertOrderToDto(order);
+            orderDtos.add(orderDto);
+        }
+        return orderDtos;
+    }
+
+    @Override
     public List<OrderDto> getUserOrders(User user) {
         List<OrderDto> orderDtos = new ArrayList<>();
         List<Order> orders = orderRepo.findAllByUserOrderByCreatedAtDesc(user);

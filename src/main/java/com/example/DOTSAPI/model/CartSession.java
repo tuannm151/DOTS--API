@@ -21,9 +21,9 @@ public class CartSession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedAt;
 
     @Transient
@@ -42,6 +42,7 @@ public class CartSession {
     private User user;
 
     public CartSession(User user) {
+        this.createdAt = new Date();
         this.user = user;
     }
 }

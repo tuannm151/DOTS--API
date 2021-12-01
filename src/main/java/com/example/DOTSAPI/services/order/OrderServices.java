@@ -4,6 +4,7 @@ import com.example.DOTSAPI.dto.order.OrderDto;
 import com.example.DOTSAPI.dto.order.RequestOrderDto;
 import com.example.DOTSAPI.enums.OrderStatus;
 import com.example.DOTSAPI.enums.PaymentStatus;
+import com.example.DOTSAPI.model.Order;
 import com.example.DOTSAPI.model.User;
 
 import javax.naming.OperationNotSupportedException;
@@ -16,4 +17,5 @@ public interface OrderServices {
     OrderDto getOrder(Long orderId);
     void changeOrderStatus(Long orderId, OrderStatus status);
     void changePaymentStatus(Long orderId, PaymentStatus status);
+    List<OrderDto> findAllOrders();
 }

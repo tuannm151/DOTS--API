@@ -93,15 +93,7 @@ public class CartSessionServicesImpl implements CartSessionServices {
         if(updateCartItemDto.getQuantity() > product.getStock()) {
             throw new OperationNotSupportedException("QUANTITY_EXCEEDED_STOCK");
         }
-        if(!product.getSize().contains(updateCartItemDto.getSize())) {
-            throw new NotFoundException("SIZE_NOT_AVAILABLE");
-        }
-        if(!product.getColor().contains(updateCartItemDto.getColor())) {
-            throw new NotFoundException("COLOR_NOT_AVAILABLE");
-        }
 
-        cartItem.setSize(updateCartItemDto.getSize());
-        cartItem.setColor(updateCartItemDto.getColor());
         cartItem.setQuantity(updateCartItemDto.getQuantity());
         cartItemRepo.save(cartItem);
     }

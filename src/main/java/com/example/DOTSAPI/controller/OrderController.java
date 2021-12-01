@@ -43,6 +43,11 @@ public class OrderController {
         return ResponseEntity.ok().body(orderServices.getUserOrders(user));
     }
 
+    @GetMapping("/admin/list")
+    public ResponseEntity<List<OrderDto>> findAllOrders() {
+        return ResponseEntity.ok().body(orderServices.findAllOrders());
+    }
+
     @GetMapping("/admin/{id}")
     public ResponseEntity<OrderDto> getOrder(@PathVariable Long id) {
         return ResponseEntity.ok().body(orderServices.getOrder(id));
@@ -58,4 +63,5 @@ public class OrderController {
         orderServices.changePaymentStatus(changePaymentStatusDto.getOrderId(), changePaymentStatusDto.getStatus());
         return ResponseEntity.ok().build();
     }
+
 }

@@ -48,7 +48,9 @@ public class ProductServicesImpl implements ProductServices {
         List<Product> products = productRepo.findAllByCategory(category);
         List<ResponseProductDto> responseProductDtos = new ArrayList<>();
         for(Product product : products) {
-            responseProductDtos.add(new ResponseProductDto(product));
+            ResponseProductDto responseProductDto = new ResponseProductDto(product);
+            responseProductDto.setDescription(null);
+            responseProductDtos.add(responseProductDto);
         }
         return responseProductDtos;
     }
@@ -58,7 +60,9 @@ public class ProductServicesImpl implements ProductServices {
         List<Product> products = productRepo.searchByKeyword(keyword.toLowerCase());;
         List<ResponseProductDto> responseProductDtos = new ArrayList<>();
         for(Product product : products) {
-            responseProductDtos.add(new ResponseProductDto(product));
+            ResponseProductDto responseProductDto = new ResponseProductDto(product);
+            responseProductDto.setDescription(null);
+            responseProductDtos.add(responseProductDto);
         }
         return responseProductDtos;
     }
@@ -82,7 +86,9 @@ public class ProductServicesImpl implements ProductServices {
         Product product = productRepo.getById(id);
         Product updatedProduct = convertToEntity(productDto, product);
         updatedProduct.setModifiedAt(new Date());
-        return new ResponseProductDto(productRepo.save(updatedProduct));
+        ResponseProductDto responseProductDto = new ResponseProductDto(productRepo.save(updatedProduct));
+        responseProductDto.setDescription(null);
+        return responseProductDto;
     }
 
     @Override

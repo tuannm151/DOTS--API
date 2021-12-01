@@ -17,12 +17,16 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 public class Category {
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Category name is missing")
+    @Column(nullable = false, length = 700)
+    @Size(max = 700, message="Image url must be smaller than 60 characters long")
+    @NotBlank(message = "IMAGEURL_MISSING")
+    private String imageUrl;
+
+    @NotBlank(message = "CATEGORY_MISSING")
     @Size(max = 60, message="Category must be smaller than 60 characters long")
     @Column(unique = true, length = 60)
     private String name;

@@ -23,9 +23,9 @@ public class CartItem {
     @Column
     private Long id;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedAt;
 
     @NotNull(message = "Quantity is missing")

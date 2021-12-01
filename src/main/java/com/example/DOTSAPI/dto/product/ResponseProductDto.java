@@ -15,9 +15,11 @@ import java.util.Set;
 
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseProductDto {
     private Long productId;
     private String productName;
+    private String description;
     private String category;
     private String imageUrl;
     private double unitPrice;
@@ -46,6 +48,7 @@ public class ResponseProductDto {
         this.brand = product.getBrand().getName();
         this.overallRating = product.getOverallRating();
         this.totalRating = product.getTotalRating();
+        this.description = product.getDescription();
         this.setCreatedAt(product.getCreatedAt());
         this.setModifiedAt(product.getModifiedAt());
     }

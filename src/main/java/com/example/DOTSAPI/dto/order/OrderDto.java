@@ -23,10 +23,10 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderDto {
     private Long orderId;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedAt;
 
     private double totalPrice;

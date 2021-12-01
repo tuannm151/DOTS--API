@@ -20,10 +20,10 @@ public class Product {
     @Column
     private Long id;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedAt;
 
     @Column(nullable = false)
@@ -32,7 +32,7 @@ public class Product {
     @Column(nullable = false,length = 1000)
     private String description;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 700)
     private String imageUrl;
 
     @Column(nullable = false)
